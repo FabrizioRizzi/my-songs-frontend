@@ -1,29 +1,34 @@
 import React from 'react';
-import './App.css';
-import axios from 'axios';
+import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
+import { Grommet } from "grommet";
+import { grommet } from "grommet/themes";
+import Login from './Login/login'
+import Home from './Home/home';
 
-
-function App() {
-
-  const clicca = () => {
-    const data = { email: "fabrizio@fabriziorizzi.it", password: "mysongs9" };
-
-    axios.post('https://my-songs-backend.herokuapp.com/authentication/login/', data)
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-
-  }
-
+const PrivateRoute = ({ children, ...rest }) => {
   return (
-    <div className="App">
-      <button onClick={clicca}>Clicca login</button>
-
-    </div>
+    <Route
+      {...rest}
+      render={({ location }) =>
+        localStorage.getItem("authToken") ?
+          children :
+          <Redirect to={{ pathname: "/login", state: { from: location } }} />
+      }
+    />
   );
 }
+
+const App = () => {
+  return (
+    <Grommet full theme={grommet}>
+      <BrowserRouter>
+        <Switch>
+          <Route exact path='/login'><Login /></Route>
+          <PrivateRoute path="/"><Home /></PrivateRoute>
+        </Switch>
+      </BrowserRouter>
+    </Grommet>
+  );
+};
 
 export default App;
