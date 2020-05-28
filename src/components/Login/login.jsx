@@ -10,42 +10,28 @@ import {
   TextInput
 } from "grommet";
 
-const defaultValue = {
-  email: "",
-  password: "",
-};
-
 const Login = () => {
 
+  const [loading, setLoading] = useState(false);
   const history = useHistory();
-  const [value, setValue] = useState(defaultValue);
 
-  const submit = () => {
-    axios.post('https://my-songs-backend.herokuapp.com/authentication/login/', value)
-      .then((response) => {
+  const submit = (event) => {
+    setLoading(true);
+    axios.post('https://my-songs-backend.herokuapp.com/authentication/login/', event.value)
+      .then(response => {
         localStorage.setItem('authToken', response.data.result.access_token);
         history.replace('/');
       })
-      .catch(function (error) {
-        console.log(error);
-      });
-
+      .catch(error => console.log(error))
+      .finally(() => setLoading(false));
   }
+
   return (
     <div>
-      <Box fill align="center" justify="center">
+      <Box fill align="center" justify="center" pad="large">
         <Box width="medium">
-          <Form
-            value={value}
-            onChange={nextValue => {
-              console.log("Change", nextValue);
-              setValue(nextValue);
-            }}
-            onReset={() => setValue(defaultValue)}
-            onSubmit={event =>
-              console.log("Submit", event.value, event.touched)
-            }
-          >
+          {loading ? 'Loading' : ''}
+          <Form onSubmit={submit}>
             <FormField label="Email" name="email" required>
               <MaskedInput
                 name="email"
@@ -58,10 +44,11 @@ const Login = () => {
                 ]}
               />
             </FormField>
-            <FormField label="Password" name="password" type="password" required />
+            <FormField label="Password" name="password" required>
+              <TextInput name="password" type="password" />
+            </FormField>
             <Box direction="row" justify="between" margin={{ top: "medium" }}>
-
-              <Button type="reset" label="Reset" primary />
+              <Button type="reset" label="Reset" />
               <Button type="submit" label="Log In" primary />
             </Box>
           </Form>
