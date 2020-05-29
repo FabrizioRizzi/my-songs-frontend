@@ -7,8 +7,10 @@ import {
   Form,
   FormField,
   MaskedInput,
-  TextInput
+  TextInput,
+  Stack
 } from "grommet";
+import { Spinner } from '../Spinner/spinner'
 
 const Login = () => {
 
@@ -27,10 +29,9 @@ const Login = () => {
   }
 
   return (
-    <div>
+    <Stack anchor="center">
       <Box fill align="center" justify="center" pad="large">
         <Box width="medium">
-          {loading ? 'Loading' : ''}
           <Form onSubmit={submit}>
             <FormField label="Email" name="email" required>
               <MaskedInput
@@ -49,12 +50,12 @@ const Login = () => {
             </FormField>
             <Box direction="row" justify="between" margin={{ top: "medium" }}>
               <Button type="reset" label="Reset" />
-              <Button type="submit" label="Log In" primary />
+              <Button type="submit" disabled={loading} label={loading ? <Spinner color="#fff" /> : "Log In"} primary />
             </Box>
           </Form>
         </Box>
       </Box>
-    </div>
+    </Stack>
   )
 };
 
