@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Button } from 'grommet';
+import { Main, Button } from 'grommet';
 
 const Home = () => {
 
@@ -11,13 +11,14 @@ const Home = () => {
     history.replace('/');
   };
 
-  return (
-    <div>
-      <div>Home</div>
-      <Button onClick={clicca} label="LogOut" primary />
-    </div>
-  );
+  const goToPlaylists = () => history.push('/playlists');
 
+  return (
+    <Main pad="large">
+      <Button onClick={clicca} label="LogOut" primary />
+      <Button onClick={goToPlaylists} label="Playlists" primary />
+    </Main>
+  );
 }
 
 export default Home;
