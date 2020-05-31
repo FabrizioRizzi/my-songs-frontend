@@ -4,13 +4,15 @@ import { Grommet } from "grommet";
 import { grommet } from "grommet/themes";
 import Login from './Login/login'
 import Home from './Home/home';
+import Playlists from './Playlists/playlists';
+import verifyToken from '../verifyToken';
 
 const PrivateRoute = ({ children, ...rest }) => {
   return (
     <Route
       {...rest}
       render={({ location }) =>
-        localStorage.getItem("authToken") ?
+        verifyToken(localStorage.getItem('authToken')) ?
           children :
           <Redirect to={{ pathname: "/login", state: { from: location } }} />
       }
@@ -24,7 +26,8 @@ const App = () => {
       <BrowserRouter>
         <Switch>
           <Route exact path='/login'><Login /></Route>
-          <PrivateRoute path="/"><Home /></PrivateRoute>
+          <PrivateRoute exact path="/"><Home /></PrivateRoute>
+          <PrivateRoute exact path="/playlists"><Playlists /></PrivateRoute>
         </Switch>
       </BrowserRouter>
     </Grommet>
