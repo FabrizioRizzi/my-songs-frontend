@@ -1,12 +1,13 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Main, Button } from 'grommet';
+import { Main, Button, Header } from 'grommet';
+import { Logout } from 'grommet-icons';
 
 const Home = () => {
 
   const history = useHistory();
 
-  const clicca = () => {
+  const logout = () => {
     localStorage.removeItem('authToken');
     history.replace('/');
   };
@@ -14,10 +15,14 @@ const Home = () => {
   const goToPlaylists = () => history.push('/playlists');
 
   return (
-    <Main pad="large">
-      <Button onClick={clicca} label="LogOut" primary />
-      <Button onClick={goToPlaylists} label="Playlists" primary />
-    </Main>
+    <>
+      <Header background="brand" justify="end">
+        <Button icon={<Logout />} onClick={logout} hoverIndicator />
+      </Header>
+      <Main pad="large">
+        <Button onClick={goToPlaylists} label="Playlists" primary />
+      </Main>
+    </>
   );
 }
 
