@@ -3,3 +3,5 @@
 * Messaggi di conferma e di errore
 
 * Dimensioni font
+
+*Fixare scrolling tabella piena

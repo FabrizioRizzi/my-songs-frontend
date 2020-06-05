@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Main, Button, DataTable, Box, Layer, Heading, Form, FormField, TextInput, Select } from 'grommet';
+import { Main, Button, DataTable, Box, Layer, Heading, Form, FormField, TextInput, Select, Header, Stack } from 'grommet';
 import { FormPreviousLink } from 'grommet-icons';
-import axios from 'axios';
-import { Spinner } from '../Spinner/spinner'
+import { Spinner } from '../Spinner/spinner';
+import { Rating } from '../Rating/rating';
+import { loggedInstance } from '../../axiosConfig';
 
 const Playlists = () => {
 
@@ -28,15 +29,14 @@ const Playlists = () => {
     { property: 'artist', header: 'Artist', },
     { property: 'album', header: 'Album', },
     { property: 'genre', header: 'Genre', },
-    { property: 'rating', header: 'Rating', }
+    { property: 'rating', header: 'Rating', size: "60px", align: "center", render: item => <Rating value={item.rating} /> }
   ]
 
   useEffect(() => loadPlaylists(), [])
 
   const loadPlaylists = () => {
     setLoadingData(true);
-    axios.get('https://my-songs-backend.herokuapp.com/playlists/',
-      { headers: { Authorization: 'Bearer ' + localStorage.getItem('authToken') } })
+    loggedInstance.get('playlists/')
       .then(response => setTableData(response.data.result))
       .catch(error => console.log(error))
       .finally(() => setLoadingData(false));
@@ -67,9 +67,7 @@ const Playlists = () => {
   const AddUpdatePlaylists = () => {
     setLoadingCrud(true);
     if (id) {
-      axios.put('https://my-songs-backend.herokuapp.com/playlists/' + id,
-        { artist, album, genre, rating },
-        { headers: { Authorization: 'Bearer ' + localStorage.getItem('authToken') } })
+      loggedInstance.put('playlists/' + id, { artist, album, genre, rating })
         .then(response => {
           loadPlaylists();
           onClose();
@@ -77,9 +75,7 @@ const Playlists = () => {
         .catch(error => console.log(error))
         .finally(() => setLoadingCrud(false));
     } else {
-      axios.post('https://my-songs-backend.herokuapp.com/playlists/',
-        { artist, album, genre, rating },
-        { headers: { Authorization: 'Bearer ' + localStorage.getItem('authToken') } })
+      loggedInstance.post('playlists/', { artist, album, genre, rating })
         .then(response => {
           loadPlaylists();
           onClose();
@@ -91,8 +87,7 @@ const Playlists = () => {
 
   const deletePlaylist = () => {
     setLoadingCrud(true);
-    axios.delete('https://my-songs-backend.herokuapp.com/playlists/' + id,
-      { headers: { Authorization: 'Bearer ' + localStorage.getItem('authToken') } })
+    loggedInstance.delete('playlists/' + id)
       .then(response => {
         loadPlaylists();
         onClose();
@@ -103,25 +98,29 @@ const Playlists = () => {
 
   return (
     <Main>
-
-      <Box direction="row" justify="between" pad="medium">
-        <Button onClick={back} label={<Box><FormPreviousLink /></Box>} />
-        <Button onClick={add} label="Add" primary />
-      </Box>
-
+      <Stack anchor="top">
+        <Header justify="between" pad="medium" fixed="true">
+          <Button onClick={back} label={<Box><FormPreviousLink /></Box>} />
+          <Heading level={2} margin="xsmall">Playlists</Heading>
+          <Button onClick={add} label="Add" primary />
+        </Header>
+      </Stack>
       {loadingData ? <Spinner /> :
-        (<DataTable
-          columns={columns}
-          data={tableData}
-          sort={sort}
-          onSort={setSort}
-          onClickRow={update}
-          pad="xsmall"
-          border="horizontal"
-          background={{
-            header: "light-5",
-          }}
-        />)
+        (
+          <Main>
+            <DataTable
+              columns={columns}
+              data={tableData}
+              sort={sort}
+              onSort={setSort}
+              onClickRow={update}
+              pad="xsmall"
+              border="horizontal"
+              background={{
+                header: "light-5",
+              }}
+            />
+          </Main>)
       }
 
       {open && (
