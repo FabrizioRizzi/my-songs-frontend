@@ -16,7 +16,8 @@ const Home = () => {
 
   return (
     <>
-      <Header background="brand" justify="end">
+      <Header background="brand" justify="between" pad="small">
+        My Songs v. alpha-0.0.1
         <Button icon={<Logout />} onClick={logout} hoverIndicator />
       </Header>
       <Main pad="large">

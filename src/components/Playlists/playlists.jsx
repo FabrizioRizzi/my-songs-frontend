@@ -119,6 +119,7 @@ const Playlists = () => {
               background={{
                 header: "light-5",
               }}
+            //size="large"
             />
           </Main>)
       }
