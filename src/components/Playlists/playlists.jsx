@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Main, Button, DataTable, Box, Layer, Heading, Form, FormField, TextInput } from 'grommet';
+import { Main, Button, DataTable, Box, Layer, Heading, Form, FormField, TextInput, Select } from 'grommet';
 import { FormPreviousLink } from 'grommet-icons';
 import axios from 'axios';
 import { Spinner } from '../Spinner/spinner'
@@ -49,7 +49,7 @@ const Playlists = () => {
     setArtist('');
     setAlbum('');
     setGenre('');
-    setRating('');
+    setRating("0");
     setId('');
   }
 
@@ -58,7 +58,7 @@ const Playlists = () => {
     setArtist(item.datum.artist);
     setAlbum(item.datum.album);
     setGenre(item.datum.genre);
-    setRating(item.datum.rating);
+    setRating(item.datum.rating?.toString());
     setId(item.datum._id.$oid);
   }
 
@@ -102,9 +102,9 @@ const Playlists = () => {
   }
 
   return (
-    <Main pad="large">
+    <Main>
 
-      <Box direction="row" justify="between" margin={{ bottom: "medium" }}>
+      <Box direction="row" justify="between" pad="medium">
         <Button onClick={back} label={<Box><FormPreviousLink /></Box>} />
         <Button onClick={add} label="Add" primary />
       </Box>
@@ -139,7 +139,7 @@ const Playlists = () => {
                 <TextInput name="genre" value={genre} onChange={event => setGenre(event.target.value)} />
               </FormField>
               <FormField label="Rating" name="rating">
-                <TextInput name="rating" value={rating} onChange={event => setRating(event.target.value)} />
+                <Select name="rating" value={rating} options={["0", "1", "2", "3", "4", "5"]} onChange={({ option }) => setRating(option)} />
               </FormField>
               <Box
                 as="footer"
