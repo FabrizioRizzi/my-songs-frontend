@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Main, Button, DataTable, Box, Layer, Heading, Form, FormField, TextInput, Select, Header, Stack } from 'grommet';
-import { FormPreviousLink } from 'grommet-icons';
-import { Spinner } from '../Spinner/spinner';
-import { Rating } from '../Rating/rating';
+import { Table, Rating, Modal, Header, Button, Loader, Confirm, Icon, Dimmer, Form } from 'semantic-ui-react';
 import { loggedInstance } from '../../axiosConfig';
+import RatingNew from '../RatingNew/ratingNew';
 
 const Playlists = () => {
 
@@ -14,6 +12,7 @@ const Playlists = () => {
   const [loadingData, setLoadingData] = useState();
 
   const [open, setOpen] = useState();
+  const [openDelete, setOpenDelete] = useState();
 
   const [artist, setArtist] = useState();
   const [album, setAlbum] = useState();
@@ -21,16 +20,20 @@ const Playlists = () => {
   const [rating, setRating] = useState();
   const [id, setId] = useState();
   const [loadingCrud, setLoadingCrud] = useState();
-  const [sort, setSort] = useState({
-    property: "artist",
-    direction: "asc"
-  });
-  const columns = [
-    { property: 'artist', header: 'Artist', },
-    { property: 'album', header: 'Album', },
-    { property: 'genre', header: 'Genre', },
-    { property: 'rating', header: 'Rating', size: "60px", align: "center", render: item => <Rating value={item.rating} /> }
-  ]
+
+  const [column, setColumn] = useState();
+  const [direction, setDirection] = useState();
+
+  const handleSort = (clickedColumn) => () => {
+    if (column !== clickedColumn) {
+      setColumn(clickedColumn);
+      setTableData(tableData.sort((a, b) => a[clickedColumn] < b[clickedColumn] ? -1 : 1));
+      setDirection('ascending');
+    } else {
+      setTableData(tableData.reverse());
+      setDirection(direction === 'ascending' ? 'descending' : 'ascending')
+    }
+  }
 
   useEffect(() => loadPlaylists(), [])
 
@@ -55,22 +58,29 @@ const Playlists = () => {
 
   const update = (item) => {
     setOpen(true);
-    setArtist(item.datum.artist);
-    setAlbum(item.datum.album);
-    setGenre(item.datum.genre);
-    setRating(item.datum.rating?.toString());
-    setId(item.datum._id.$oid);
+    setArtist(item.artist);
+    setAlbum(item.album);
+    setGenre(item.genre);
+    setRating(item.rating);
+    setId(item._id.$oid);
   }
 
   const onClose = () => setOpen(false);
 
-  const AddUpdatePlaylists = () => {
+  const onChangeArtist = (event) => setArtist(event.target.value);
+  const onChangeAlbum = (event) => setAlbum(event.target.value);
+  const onChangeGenre = (event) => setGenre(event.target.value);
+  const onChangeRating = (e, { rating }) => setRating(rating);
+
+  const addUpdatePlaylists = () => {
     setLoadingCrud(true);
     if (id) {
       loggedInstance.put('playlists/' + id, { artist, album, genre, rating })
         .then(response => {
           loadPlaylists();
           onClose();
+          setDirection(null);
+          setColumn(null);
         })
         .catch(error => console.log(error))
         .finally(() => setLoadingCrud(false));
@@ -79,10 +89,17 @@ const Playlists = () => {
         .then(response => {
           loadPlaylists();
           onClose();
+          setDirection(null);
+          setColumn(null);
         })
         .catch(error => console.log(error))
         .finally(() => setLoadingCrud(false));
     }
+  }
+
+  const onDelete = (id) => {
+    setId(id);
+    setOpenDelete(true);
   }
 
   const deletePlaylist = () => {
@@ -90,88 +107,90 @@ const Playlists = () => {
     loggedInstance.delete('playlists/' + id)
       .then(response => {
         loadPlaylists();
-        onClose();
+        setOpenDelete(false);
+        setDirection(null);
+        setColumn(null);
       })
       .catch(error => console.log(error))
       .finally(() => setLoadingCrud(false));
   }
 
   return (
-    <Main>
-      <Stack anchor="top">
-        <Header justify="between" pad="medium" fixed="true">
-          <Button onClick={back} label={<Box><FormPreviousLink /></Box>} />
-          <Heading level={2} margin="xsmall">Playlists</Heading>
-          <Button onClick={add} label="Add" primary />
-        </Header>
-      </Stack>
-      {loadingData ? <Spinner /> :
-        (
-          <Main>
-            <DataTable
-              columns={columns}
-              data={tableData}
-              sort={sort}
-              onSort={setSort}
-              onClickRow={update}
-              pad="xsmall"
-              border="horizontal"
-              background={{
-                header: "light-5",
-              }}
-            //size="large"
-            />
-          </Main>)
-      }
+    <>
+      <Dimmer active={loadingData} inverted>
+        <Loader />
+      </Dimmer>
 
-      {open && (
-        <Layer position="center" onClickOutside={onClose} onEsc={onClose}>
-          <Box pad="medium" gap="small" width="medium">
-            <Heading level={3}>Add Item</Heading>
-            <Form onSubmit={AddUpdatePlaylists}>
-              <FormField label="Artist" name="artist" required>
-                <TextInput name="artist" value={artist} onChange={event => setArtist(event.target.value)} />
-              </FormField>
-              <FormField label="Album" name="album" required>
-                <TextInput name="album" value={album} onChange={event => setAlbum(event.target.value)} />
-              </FormField>
-              <FormField label="Genre" name="genre">
-                <TextInput name="genre" value={genre} onChange={event => setGenre(event.target.value)} />
-              </FormField>
-              <FormField label="Rating" name="rating">
-                <Select name="rating" value={rating} options={["0", "1", "2", "3", "4", "5"]} onChange={({ option }) => setRating(option)} />
-              </FormField>
-              <Box
-                as="footer"
-                gap="small"
-                direction="row"
-                align="center"
-                justify="between"
-                pad={{ top: "medium", bottom: "small" }}
-              >
-                <Button
-                  onClick={onClose}
-                  label="Close"
-                />
-                {id ? (<Button
-                  onClick={deletePlaylist}
-                  label={loadingCrud ? <Spinner color="#fff" /> : "Delete"}
-                  primary
-                  disabled={loadingCrud}
-                  color="status-critical" />) : ''}
-                <Button
-                  type="submit"
-                  label={loadingCrud ? <Spinner color="#fff" /> : id ? 'Update' : 'Add'}
-                  disabled={loadingCrud}
-                  primary />
-              </Box>
-            </Form>
-          </Box>
-        </Layer>
-      )}
-    </Main>
+      <Header as='h2' icon textAlign='center' color="teal">
+        <Icon name='music' circular inverted color='teal' />
+        <Header.Content>Playlists</Header.Content>
+        <Header.Subheader>Musica da ascoltare</Header.Subheader>
+      </Header>
+
+      <Button onClick={back} icon="arrow left" size="small"></Button>
+      <Button onClick={add} icon="plus" size="small"></Button>
+
+      <Table sortable textAlign="center" color="teal">
+        <Table.Header>
+          <Table.Row>
+            <Table.HeaderCell
+              sorted={column === 'artist' ? direction : null}
+              onClick={handleSort('artist')}>
+              Artist
+            </Table.HeaderCell>
+            <Table.HeaderCell
+              sorted={column === 'album' ? direction : null}
+              onClick={handleSort('album')}>Album</Table.HeaderCell>
+            <Table.HeaderCell
+              sorted={column === 'genre' ? direction : null}
+              onClick={handleSort('genre')}>Genre</Table.HeaderCell>
+            <Table.HeaderCell
+              sorted={column === 'rating' ? direction : null}
+              onClick={handleSort('rating')}>Rating</Table.HeaderCell>
+            <Table.HeaderCell></Table.HeaderCell>
+            <Table.HeaderCell></Table.HeaderCell>
+          </Table.Row>
+        </Table.Header>
+
+        <Table.Body>
+          {tableData?.map((p, i) => {
+            return (
+              <Table.Row key={i}>
+                <Table.Cell>{p.artist}</Table.Cell>
+                <Table.Cell>{p.album}</Table.Cell>
+                <Table.Cell>{p.genre}</Table.Cell>
+                <Table.Cell>
+                  <RatingNew rating={p.rating}></RatingNew>
+                </Table.Cell>
+                <Table.Cell icon="delete" onClick={() => onDelete(p._id.$oid)}></Table.Cell>
+                <Table.Cell icon="edit" onClick={() => update(p)}></Table.Cell>
+              </Table.Row>
+            )
+          })}
+        </Table.Body>
+      </Table>
+
+      <Confirm
+        open={openDelete}
+        onCancel={() => setOpenDelete(false)}
+        onConfirm={deletePlaylist}
+      />
+
+      <Modal open={open}>
+        <Modal.Header>{id ? 'Update Playlist' : 'Add Playlist'}</Modal.Header>
+        <Modal.Content>
+          <Form onSubmit={addUpdatePlaylists} loading={loadingCrud}>
+            <Form.Input name="artist" value={artist} placeholder='Artist' onChange={onChangeArtist} required />
+            <Form.Input name="album" value={album} placeholder='Album' onChange={onChangeAlbum} required />
+            <Form.Input name="genre" value={genre} placeholder='Genre' onChange={onChangeGenre} />
+            <Rating icon="stars" color="teal" defaultRating={rating} maxRating={5} onRate={onChangeRating} clearable></Rating>
+            <Button type="submit" fluid size='large' color="teal">{id ? 'Update' : 'Add'}</Button>
+          </Form>
+          <Button onClick={onClose}>Close</Button>
+        </Modal.Content>
+      </Modal>
+    </>
   );
-
 }
 
 export default Playlists;

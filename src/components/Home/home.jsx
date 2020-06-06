@@ -1,6 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Header, Button } from 'semantic-ui-react';
+import { Grid, Header, Button, Icon } from 'semantic-ui-react';
 
 const Home = () => {
 
@@ -15,13 +15,13 @@ const Home = () => {
 
   return (
     <>
-      <Header
-        as='h2'
-        icon="music"
-        content='My Songs v. alpha-0.0.1'
-        subheader='Music under control'
-        textAlign="center"
-      />
+      <Grid textAlign='center' style={{ background: '#eee' }} verticalAlign='middle' padded>
+        <Header as='h2' icon textAlign="center">
+          <Icon name="music"></Icon>
+          <Header.Content>My Songs</Header.Content>
+          <Header.Subheader>Gestisci la musica da ascoltare e da suonare</Header.Subheader>
+        </Header>
+      </Grid>
 
       <Button onClick={logout}>Logout</Button>
       <Button onClick={goToPlaylists} content='Playlists' icon="like" />

@@ -27,9 +27,10 @@ const Login = () => {
   return (
     <Grid textAlign='center' style={{ height: '100vh', background: '#eee' }} verticalAlign='middle' padded>
       <Grid.Column style={{ maxWidth: 450 }}>
-        <Header as='h2' icon textAlign='center' color="purple">
-          <Icon name='headphones' circular inverted color='purple' />
-          <Header.Content>Log In to your account</Header.Content>
+        <Header as='h2' icon textAlign='center' color="teal">
+          <Icon name='headphones' circular inverted color='teal' />
+          <Header.Content>My Songs</Header.Content>
+          <Header.Subheader>Gestisci la musica da ascoltare e da suonare</Header.Subheader>
         </Header>
         <Form onSubmit={submit} loading={loading}>
           <Segment>
@@ -51,7 +52,7 @@ const Login = () => {
               required
             />
           </Segment>
-          <Button type="submit" fluid size='large' color="purple">Log In</Button>
+          <Button type="submit" fluid size='large' color="teal">Log In</Button>
         </Form>
       </Grid.Column>
     </Grid>

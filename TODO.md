@@ -5,3 +5,7 @@
 * Ripristinare strict mode (semantic ui - https://github.com/Semantic-Org/Semantic-UI-React/issues/3810)
 
 * Dark theme
+
+* Migliorare sorting dopo delete o altre operazioni che ricaricano i dati
+
+* logout e login deve ripassare da axios config, aggiornare loggedInstance
