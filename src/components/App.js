@@ -1,7 +1,5 @@
 import React from 'react';
 import { BrowserRouter, Route, Redirect, Switch } from "react-router-dom";
-import { Grommet } from "grommet";
-import { grommet } from "grommet/themes";
 import Login from './Login/login'
 import Home from './Home/home';
 import Playlists from './Playlists/playlists';
@@ -22,15 +20,13 @@ const PrivateRoute = ({ children, ...rest }) => {
 
 const App = () => {
   return (
-    <Grommet full theme={grommet}>
-      <BrowserRouter>
-        <Switch>
-          <Route exact path='/login'><Login /></Route>
-          <PrivateRoute exact path="/"><Home /></PrivateRoute>
-          <PrivateRoute exact path="/playlists"><Playlists /></PrivateRoute>
-        </Switch>
-      </BrowserRouter>
-    </Grommet>
+    <BrowserRouter>
+      <Switch>
+        <Route exact path='/login'><Login /></Route>
+        <PrivateRoute exact path="/"><Home /></PrivateRoute>
+        <PrivateRoute exact path="/playlists"><Playlists /></PrivateRoute>
+      </Switch>
+    </BrowserRouter>
   );
 };
 

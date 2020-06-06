@@ -1,7 +1,6 @@
 import React from 'react';
 import { useHistory } from 'react-router-dom';
-import { Main, Button, Header } from 'grommet';
-import { Logout } from 'grommet-icons';
+import { Header, Button } from 'semantic-ui-react';
 
 const Home = () => {
 
@@ -16,13 +15,16 @@ const Home = () => {
 
   return (
     <>
-      <Header background="brand" justify="between" pad="small">
-        My Songs v. alpha-0.0.1
-        <Button icon={<Logout />} onClick={logout} hoverIndicator />
-      </Header>
-      <Main pad="large">
-        <Button onClick={goToPlaylists} label="Playlists" primary />
-      </Main>
+      <Header
+        as='h2'
+        icon="music"
+        content='My Songs v. alpha-0.0.1'
+        subheader='Music under control'
+        textAlign="center"
+      />
+
+      <Button onClick={logout}>Logout</Button>
+      <Button onClick={goToPlaylists} content='Playlists' icon="like" />
     </>
   );
 }

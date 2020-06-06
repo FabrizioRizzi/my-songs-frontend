@@ -2,6 +2,6 @@
 
 * Messaggi di conferma e di errore
 
-* Dimensioni font
+* Ripristinare strict mode (semantic ui - https://github.com/Semantic-Org/Semantic-UI-React/issues/3810)
 
-*Fixare scrolling tabella piena
+* Dark theme

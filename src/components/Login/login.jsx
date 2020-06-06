@@ -1,25 +1,18 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import {
-  Box,
-  Button,
-  Form,
-  FormField,
-  MaskedInput,
-  TextInput,
-  Stack
-} from "grommet";
-import { Spinner } from '../Spinner/spinner'
+import axios from 'axios';
+import { Header, Grid, Segment, Form, Button, Icon } from 'semantic-ui-react';
 
 const Login = () => {
 
   const [loading, setLoading] = useState(false);
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
   const history = useHistory();
 
-  const submit = (event) => {
+  const submit = () => {
     setLoading(true);
-    axios.post('https://my-songs-backend.herokuapp.com/authentication/login/', event.value)
+    axios.post('https://my-songs-backend.herokuapp.com/authentication/login/', { email, password })
       .then(response => {
         localStorage.setItem('authToken', response.data.result.access_token);
         history.replace('/');
@@ -28,34 +21,40 @@ const Login = () => {
       .finally(() => setLoading(false));
   }
 
+  const onChangeEmail = (event) => setEmail(event.target.value);
+  const onChangePassword = (event) => setPassword(event.target.value);
+
   return (
-    <Stack anchor="center">
-      <Box fill align="center" justify="center" pad="large">
-        <Box width="medium">
-          <Form onSubmit={submit}>
-            <FormField label="Email" name="email" required>
-              <MaskedInput
-                name="email"
-                mask={[
-                  { regexp: /^[\w\-_.]+$/, placeholder: "example" },
-                  { fixed: "@" },
-                  { regexp: /^[\w]+$/, placeholder: "my" },
-                  { fixed: "." },
-                  { regexp: /^[\w]+$/, placeholder: "com" }
-                ]}
-              />
-            </FormField>
-            <FormField label="Password" name="password" required>
-              <TextInput name="password" type="password" />
-            </FormField>
-            <Box direction="row" justify="between" margin={{ top: "medium" }}>
-              <Button type="reset" label="Reset" />
-              <Button type="submit" disabled={loading} label={loading ? <Spinner color="#fff" /> : "Log In"} primary />
-            </Box>
-          </Form>
-        </Box>
-      </Box>
-    </Stack>
+    <Grid textAlign='center' style={{ height: '100vh', background: '#eee' }} verticalAlign='middle' padded>
+      <Grid.Column style={{ maxWidth: 450 }}>
+        <Header as='h2' icon textAlign='center' color="purple">
+          <Icon name='headphones' circular inverted color='purple' />
+          <Header.Content>Log In to your account</Header.Content>
+        </Header>
+        <Form onSubmit={submit} loading={loading}>
+          <Segment>
+            <Form.Input
+              name="email"
+              fluid icon='user'
+              iconPosition='left'
+              placeholder='E-mail address'
+              onChange={onChangeEmail}
+              required
+            />
+            <Form.Input
+              name="password"
+              fluid icon='lock'
+              iconPosition='left'
+              placeholder='Password'
+              type='password'
+              onChange={onChangePassword}
+              required
+            />
+          </Segment>
+          <Button type="submit" fluid size='large' color="purple">Log In</Button>
+        </Form>
+      </Grid.Column>
+    </Grid>
   )
 };
 

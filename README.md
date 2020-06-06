@@ -2,6 +2,6 @@
 
 App creata con react (create-react-app)
 
-Grommet
+Semantic UI React
 
 Deployata con netlify
