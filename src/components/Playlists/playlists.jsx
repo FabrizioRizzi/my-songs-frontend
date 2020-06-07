@@ -109,7 +109,7 @@ const Playlists = () => {
         <Loader>Loading...</Loader>
       </Dimmer>
 
-      <Segment padded attached>
+      <Segment padded basic>
         <Header as='h2' icon textAlign='center' color="teal" >
           <Icon name='music' circular inverted color='teal' />
           <Header.Content>Playlists</Header.Content>

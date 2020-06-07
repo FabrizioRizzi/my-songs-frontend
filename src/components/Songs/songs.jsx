@@ -8,9 +8,9 @@ const Songs = () => {
   const back = () => history.push('/');
 
   return (
-    <Segment padded attached>
+    <Segment padded basic>
       <Header as='h2' icon textAlign='center' color="olive" >
-        <Icon name='music' circular inverted color='olive' />
+        <Icon name='play' circular inverted color='olive' />
         <Header.Content>Songs</Header.Content>
         <Header.Subheader>Musica da suonare</Header.Subheader>
       </Header>
