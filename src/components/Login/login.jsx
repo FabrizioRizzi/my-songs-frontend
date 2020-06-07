@@ -28,7 +28,7 @@ const Login = () => {
     <Grid textAlign='center' style={{ height: '100vh', background: '#eee' }} verticalAlign='middle' padded>
       <Grid.Column style={{ maxWidth: 450 }}>
         <Header as='h2' icon textAlign='center' color="teal">
-          <Icon name='headphones' circular inverted color='teal' />
+          <Icon name='music' circular inverted color='teal' />
           <Header.Content>My Songs</Header.Content>
           <Header.Subheader>Gestisci la musica da ascoltare e da suonare</Header.Subheader>
         </Header>

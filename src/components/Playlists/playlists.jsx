@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Grid, Table, Rating, Modal, Header, Button, Loader, Icon, Dimmer, Form, Divider } from 'semantic-ui-react';
+import { Grid, Table, Rating, Modal, Header, Button, Loader, Icon, Dimmer, Form, Divider, Segment } from 'semantic-ui-react';
 import { loggedInstance } from '../../axiosConfig';
 import RatingNew from '../RatingNew/ratingNew';
 
 const Playlists = () => {
 
   const history = useHistory();
+  const back = () => history.push('/');
 
   const [tableData, setTableData] = useState();
   const [loadingData, setLoadingData] = useState();
@@ -38,8 +39,6 @@ const Playlists = () => {
       .catch(error => console.log(error))
       .finally(() => setLoadingData(false));
   }
-
-  const back = () => history.push('/');
 
   const add = () => {
     setOpen(true);
@@ -107,23 +106,25 @@ const Playlists = () => {
   return (
     <>
       <Dimmer active={loadingData} inverted>
-        <Loader />
+        <Loader>Loading...</Loader>
       </Dimmer>
 
-      <Header as='h2' icon textAlign='center' color="teal">
-        <Icon name='music' circular inverted color='teal' />
-        <Header.Content>Playlists</Header.Content>
-        <Header.Subheader>Musica da ascoltare</Header.Subheader>
-      </Header>
+      <Segment padded attached>
+        <Header as='h2' icon textAlign='center' color="teal" >
+          <Icon name='music' circular inverted color='teal' />
+          <Header.Content>Playlists</Header.Content>
+          <Header.Subheader>Musica da ascoltare</Header.Subheader>
+        </Header>
 
-      <Grid columns={2} divided padded>
-        <Grid.Column>
-          <Button onClick={back} icon="arrow left" fluid content="Back Home"></Button>
-        </Grid.Column>
-        <Grid.Column>
-          <Button onClick={add} icon="plus" fluid color="teal" content="Add Playlist"></Button>
-        </Grid.Column>
-      </Grid>
+        <Grid columns={2} >
+          <Grid.Column>
+            <Button onClick={back} icon="arrow left" fluid content="Back Home"></Button>
+          </Grid.Column>
+          <Grid.Column>
+            <Button onClick={add} icon="plus" fluid color="teal" content="Add Playlist"></Button>
+          </Grid.Column>
+        </Grid>
+      </Segment>
 
       <Table sortable textAlign="center" color="teal" unstackable selectable>
         <Table.Header>
