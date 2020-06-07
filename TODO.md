@@ -6,6 +6,6 @@
 
 * Dark theme
 
-* Migliorare sorting dopo delete o altre operazioni che ricaricano i dati
+* Migliorare configurazione axios
 
-* logout e login deve ripassare da axios config, aggiornare loggedInstance
+* Sistemare form add delete playlist

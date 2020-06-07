@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Table, Rating, Modal, Header, Button, Loader, Confirm, Icon, Dimmer, Form } from 'semantic-ui-react';
+import { Grid, Table, Rating, Modal, Header, Button, Loader, Icon, Dimmer, Form, Divider } from 'semantic-ui-react';
 import { loggedInstance } from '../../axiosConfig';
 import RatingNew from '../RatingNew/ratingNew';
 
@@ -12,7 +12,7 @@ const Playlists = () => {
   const [loadingData, setLoadingData] = useState();
 
   const [open, setOpen] = useState();
-  const [openDelete, setOpenDelete] = useState();
+  const [confirmDelete, setConfirmDelete] = useState();
 
   const [artist, setArtist] = useState();
   const [album, setAlbum] = useState();
@@ -24,23 +24,17 @@ const Playlists = () => {
   const [column, setColumn] = useState();
   const [direction, setDirection] = useState();
 
-  const handleSort = (clickedColumn) => () => {
-    if (column !== clickedColumn) {
-      setColumn(clickedColumn);
-      setTableData(tableData.sort((a, b) => a[clickedColumn] < b[clickedColumn] ? -1 : 1));
-      setDirection('ascending');
-    } else {
-      setTableData(tableData.reverse());
-      setDirection(direction === 'ascending' ? 'descending' : 'ascending')
-    }
-  }
-
   useEffect(() => loadPlaylists(), [])
 
   const loadPlaylists = () => {
+    setOpen(false);
     setLoadingData(true);
     loggedInstance.get('playlists/')
-      .then(response => setTableData(response.data.result))
+      .then(response => {
+        setTableData(response.data.result.sort((a, b) => a.artist < b.artist ? -1 : 1));
+        setDirection('ascending');
+        setColumn('artist');
+      })
       .catch(error => console.log(error))
       .finally(() => setLoadingData(false));
   }
@@ -58,6 +52,7 @@ const Playlists = () => {
 
   const update = (item) => {
     setOpen(true);
+    setConfirmDelete(false);
     setArtist(item.artist);
     setAlbum(item.album);
     setGenre(item.genre);
@@ -76,43 +71,37 @@ const Playlists = () => {
     setLoadingCrud(true);
     if (id) {
       loggedInstance.put('playlists/' + id, { artist, album, genre, rating })
-        .then(response => {
-          loadPlaylists();
-          onClose();
-          setDirection(null);
-          setColumn(null);
-        })
+        .then(response => loadPlaylists())
         .catch(error => console.log(error))
         .finally(() => setLoadingCrud(false));
     } else {
       loggedInstance.post('playlists/', { artist, album, genre, rating })
-        .then(response => {
-          loadPlaylists();
-          onClose();
-          setDirection(null);
-          setColumn(null);
-        })
+        .then(response => loadPlaylists())
         .catch(error => console.log(error))
         .finally(() => setLoadingCrud(false));
     }
   }
 
-  const onDelete = (id) => {
-    setId(id);
-    setOpenDelete(true);
-  }
+  const onDelete = () => setConfirmDelete(true);
 
   const deletePlaylist = () => {
+    setConfirmDelete(false);
     setLoadingCrud(true);
     loggedInstance.delete('playlists/' + id)
-      .then(response => {
-        loadPlaylists();
-        setOpenDelete(false);
-        setDirection(null);
-        setColumn(null);
-      })
+      .then(response => loadPlaylists())
       .catch(error => console.log(error))
       .finally(() => setLoadingCrud(false));
+  }
+
+  const handleSort = (clickedColumn) => () => {
+    if (column !== clickedColumn) {
+      setColumn(clickedColumn);
+      setTableData(tableData.sort((a, b) => a[clickedColumn] < b[clickedColumn] ? -1 : 1));
+      setDirection('ascending');
+    } else {
+      setTableData(tableData.reverse());
+      setDirection(direction === 'ascending' ? 'descending' : 'ascending')
+    }
   }
 
   return (
@@ -127,17 +116,21 @@ const Playlists = () => {
         <Header.Subheader>Musica da ascoltare</Header.Subheader>
       </Header>
 
-      <Button onClick={back} icon="arrow left" size="small"></Button>
-      <Button onClick={add} icon="plus" size="small"></Button>
+      <Grid columns={2} divided padded>
+        <Grid.Column>
+          <Button onClick={back} icon="arrow left" fluid content="Back Home"></Button>
+        </Grid.Column>
+        <Grid.Column>
+          <Button onClick={add} icon="plus" fluid color="teal" content="Add Playlist"></Button>
+        </Grid.Column>
+      </Grid>
 
-      <Table sortable textAlign="center" color="teal">
+      <Table sortable textAlign="center" color="teal" unstackable selectable>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell
               sorted={column === 'artist' ? direction : null}
-              onClick={handleSort('artist')}>
-              Artist
-            </Table.HeaderCell>
+              onClick={handleSort('artist')}>Artist</Table.HeaderCell>
             <Table.HeaderCell
               sorted={column === 'album' ? direction : null}
               onClick={handleSort('album')}>Album</Table.HeaderCell>
@@ -147,46 +140,46 @@ const Playlists = () => {
             <Table.HeaderCell
               sorted={column === 'rating' ? direction : null}
               onClick={handleSort('rating')}>Rating</Table.HeaderCell>
-            <Table.HeaderCell></Table.HeaderCell>
-            <Table.HeaderCell></Table.HeaderCell>
           </Table.Row>
         </Table.Header>
 
         <Table.Body>
-          {tableData?.map((p, i) => {
+          {tableData?.map((playlist, i) => {
             return (
-              <Table.Row key={i}>
-                <Table.Cell>{p.artist}</Table.Cell>
-                <Table.Cell>{p.album}</Table.Cell>
-                <Table.Cell>{p.genre}</Table.Cell>
-                <Table.Cell>
-                  <RatingNew rating={p.rating}></RatingNew>
+              <Table.Row key={i} onClick={() => update(playlist)}>
+                <Table.Cell>{playlist.artist}</Table.Cell>
+                <Table.Cell>{playlist.album}</Table.Cell>
+                <Table.Cell>{playlist.genre}</Table.Cell>
+                <Table.Cell singleLine>
+                  <RatingNew rating={playlist.rating}></RatingNew>
                 </Table.Cell>
-                <Table.Cell icon="delete" onClick={() => onDelete(p._id.$oid)}></Table.Cell>
-                <Table.Cell icon="edit" onClick={() => update(p)}></Table.Cell>
               </Table.Row>
             )
           })}
         </Table.Body>
       </Table>
 
-      <Confirm
-        open={openDelete}
-        onCancel={() => setOpenDelete(false)}
-        onConfirm={deletePlaylist}
-      />
-
       <Modal open={open}>
         <Modal.Header>{id ? 'Update Playlist' : 'Add Playlist'}</Modal.Header>
         <Modal.Content>
           <Form onSubmit={addUpdatePlaylists} loading={loadingCrud}>
-            <Form.Input name="artist" value={artist} placeholder='Artist' onChange={onChangeArtist} required />
-            <Form.Input name="album" value={album} placeholder='Album' onChange={onChangeAlbum} required />
-            <Form.Input name="genre" value={genre} placeholder='Genre' onChange={onChangeGenre} />
-            <Rating icon="stars" color="teal" defaultRating={rating} maxRating={5} onRate={onChangeRating} clearable></Rating>
-            <Button type="submit" fluid size='large' color="teal">{id ? 'Update' : 'Add'}</Button>
+            <Form.Input label='Artist' name="artist" value={artist} placeholder='Artist' onChange={onChangeArtist} required />
+            <Form.Input label='Album' name="album" value={album} placeholder='Album' onChange={onChangeAlbum} required />
+            <Form.Input label='Genre' name="genre" value={genre} placeholder='Genre' onChange={onChangeGenre} />
+            <Form.Field>
+              Rating: <Rating icon="star" color="teal" defaultRating={rating} maxRating={5} onRate={onChangeRating} clearable></Rating>
+            </Form.Field>
+            {id ?
+              (<Button.Group fluid>
+                <Button type="submit" positive>Update</Button>
+                <Button.Or text='O' />
+                {!confirmDelete ? (<Button onClick={onDelete} negative>Delete</Button>) : ''}
+                {confirmDelete ? (<Button onClick={deletePlaylist} negative>Confirm Delete?</Button>) : ''}
+              </Button.Group>) :
+              (<Button type="submit" fluid positive>{id ? 'Update' : 'Add'}</Button>)}
           </Form>
-          <Button onClick={onClose}>Close</Button>
+          <Divider horizontal>Close</Divider>
+          <Button onClick={onClose} fluid>Close</Button>
         </Modal.Content>
       </Modal>
     </>
