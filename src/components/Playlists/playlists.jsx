@@ -168,8 +168,10 @@ const Playlists = () => {
             <Form.Input label='Album' name="album" value={album} placeholder='Album' onChange={onChangeAlbum} required />
             <Form.Input label='Genre' name="genre" value={genre} placeholder='Genre' onChange={onChangeGenre} />
             <Form.Field>
-              Rating: <Rating icon="star" color="teal" defaultRating={rating} maxRating={5} onRate={onChangeRating} clearable></Rating>
+              <label>Rating</label>
+              <Rating icon="star" size="huge" color="teal" defaultRating={rating} maxRating={5} onRate={onChangeRating} clearable></Rating>
             </Form.Field>
+            <Divider horizontal style={{ margin: '25px' }}>Confirm</Divider>
             {id ?
               (<Button.Group fluid>
                 <Button type="submit" positive>Update</Button>
@@ -179,7 +181,7 @@ const Playlists = () => {
               </Button.Group>) :
               (<Button type="submit" fluid positive>{id ? 'Update' : 'Add'}</Button>)}
           </Form>
-          <Divider horizontal>Close</Divider>
+          <Divider horizontal style={{ margin: '25px' }}>Close</Divider>
           <Button onClick={onClose} fluid>Close</Button>
         </Modal.Content>
       </Modal>
