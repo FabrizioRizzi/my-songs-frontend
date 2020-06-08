@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { Segment, Header, Icon, Grid, Button, Table, Dimmer, Loader, Form, Modal, Rating, Divider } from 'semantic-ui-react';
 import RatingNew from '../RatingNew/ratingNew';
 import { loggedInstance } from '../../axiosConfig';
+import SongsInfo from './songsInfo';
 
 const Songs = () => {
 
@@ -15,6 +16,8 @@ const Songs = () => {
 
   const [open, setOpen] = useState();
   const [confirmDelete, setConfirmDelete] = useState();
+  const [openInfo, setOpenInfo] = useState();
+  const [info, setInfo] = useState();
 
   const [artist, setArtist] = useState();
   const [title, setTitle] = useState();
@@ -120,6 +123,13 @@ const Songs = () => {
     }
   }
 
+  const onOpenInfo = (info) => {
+    setOpenInfo(true);
+    setInfo(info);
+  }
+
+  const onCloseInfo = () => setOpenInfo(false);
+
   return (
     <>
       <Dimmer active={loadingData} inverted>
@@ -155,18 +165,22 @@ const Songs = () => {
             <Table.HeaderCell
               sorted={column === 'difficulty' ? direction : null}
               onClick={handleSort('difficulty')}>Difficulty</Table.HeaderCell>
+            <Table.HeaderCell></Table.HeaderCell>
+            <Table.HeaderCell></Table.HeaderCell>
           </Table.Row>
         </Table.Header>
 
         <Table.Body>
           {tableData?.map((song, i) => {
             return (
-              <Table.Row key={i} onClick={() => update(song)}>
+              <Table.Row key={i}>
                 <Table.Cell>{song.artist}</Table.Cell>
                 <Table.Cell>{song.title}</Table.Cell>
                 <Table.Cell singleLine>
-                  <RatingNew rating={song.difficulty}></RatingNew>
+                  <RatingNew rating={song.difficulty} color="olive"></RatingNew>
                 </Table.Cell>
+                <Table.Cell icon="edit" onClick={() => update(song)} style={{ cursor: 'pointer' }}></Table.Cell>
+                <Table.Cell icon="info" onClick={() => onOpenInfo(song)} style={{ cursor: 'pointer' }}></Table.Cell>
               </Table.Row>
             )
           })}
@@ -200,6 +214,16 @@ const Songs = () => {
           </Form>
           <Divider horizontal style={{ margin: '25px' }}>Close</Divider>
           <Button onClick={onClose} fluid>Close</Button>
+        </Modal.Content>
+      </Modal>
+
+      <Modal open={openInfo}>
+
+        <Modal.Header>Song Info</Modal.Header>
+
+        <Modal.Content>
+          <SongsInfo info={info}></SongsInfo>
+          <Button onClick={onCloseInfo} fluid>Close</Button>
         </Modal.Content>
       </Modal>
     </>
