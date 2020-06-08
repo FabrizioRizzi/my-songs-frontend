@@ -4,7 +4,7 @@ import { Grid, Table, Rating, Modal, Header, Button, Loader, Icon, Dimmer, Form,
 import { loggedInstance } from '../../axiosConfig';
 import RatingNew from '../RatingNew/ratingNew';
 
-const Playlists = () => {
+const Standards = () => {
 
   const history = useHistory();
   const back = () => history.push('/');
@@ -15,26 +15,26 @@ const Playlists = () => {
   const [open, setOpen] = useState();
   const [confirmDelete, setConfirmDelete] = useState();
 
-  const [artist, setArtist] = useState();
-  const [album, setAlbum] = useState();
-  const [genre, setGenre] = useState();
-  const [rating, setRating] = useState();
+  const [title, setTitle] = useState();
+  const [aebersold, setAebersold] = useState();
+  const [difficulty, setDifficulty] = useState();
+  const [notes, setNotes] = useState();
   const [id, setId] = useState();
   const [loadingCrud, setLoadingCrud] = useState();
 
   const [column, setColumn] = useState();
   const [direction, setDirection] = useState();
 
-  useEffect(() => loadPlaylists(), [])
+  useEffect(() => loadStandards(), [])
 
-  const loadPlaylists = () => {
+  const loadStandards = () => {
     setOpen(false);
     setLoadingData(true);
-    loggedInstance.get('playlists/')
+    loggedInstance.get('standards/')
       .then(response => {
-        setTableData(response.data.result.sort((a, b) => a.artist < b.artist ? -1 : 1));
+        setTableData(response.data.result.sort((a, b) => a.title < b.title ? -1 : 1));
         setDirection('ascending');
-        setColumn('artist');
+        setColumn('title');
       })
       .catch(error => console.log(error))
       .finally(() => setLoadingData(false));
@@ -42,40 +42,40 @@ const Playlists = () => {
 
   const add = () => {
     setOpen(true);
-    setArtist('');
-    setAlbum('');
-    setGenre('');
-    setRating("0");
+    setTitle('');
+    setAebersold('');
+    setDifficulty("0");
+    setNotes('');
     setId('');
   }
 
   const update = (item) => {
     setOpen(true);
     setConfirmDelete(false);
-    setArtist(item.artist);
-    setAlbum(item.album);
-    setGenre(item.genre);
-    setRating(item.rating);
+    setTitle(item.title);
+    setAebersold(item.aebersold);
+    setDifficulty(item.difficulty);
+    setNotes(item.notes);
     setId(item._id.$oid);
   }
 
   const onClose = () => setOpen(false);
 
-  const onChangeArtist = (event) => setArtist(event.target.value);
-  const onChangeAlbum = (event) => setAlbum(event.target.value);
-  const onChangeGenre = (event) => setGenre(event.target.value);
-  const onChangeRating = (e, { rating }) => setRating(rating);
+  const onChangeTitle = (event) => setTitle(event.target.value);
+  const onChangeAebersold = (event) => setAebersold(event.target.value);
+  const onChangeDifficulty = (e, { rating }) => setDifficulty(rating);
+  const onChangeNotes = (event) => setNotes(event.target.value);
 
-  const addUpdatePlaylists = () => {
+  const addUpdateStandards = () => {
     setLoadingCrud(true);
     if (id) {
-      loggedInstance.put('playlists/' + id, { artist, album, genre, rating })
-        .then(response => loadPlaylists())
+      loggedInstance.put('standards/' + id, { title, aebersold, difficulty, notes })
+        .then(response => loadStandards())
         .catch(error => console.log(error))
         .finally(() => setLoadingCrud(false));
     } else {
-      loggedInstance.post('playlists/', { artist, album, genre, rating })
-        .then(response => loadPlaylists())
+      loggedInstance.post('standards/', { title, aebersold, difficulty, notes })
+        .then(response => loadStandards())
         .catch(error => console.log(error))
         .finally(() => setLoadingCrud(false));
     }
@@ -83,11 +83,11 @@ const Playlists = () => {
 
   const onDelete = () => setConfirmDelete(true);
 
-  const deletePlaylist = () => {
+  const deleteStandard = () => {
     setConfirmDelete(false);
     setLoadingCrud(true);
-    loggedInstance.delete('playlists/' + id)
-      .then(response => loadPlaylists())
+    loggedInstance.delete('standards/' + id)
+      .then(response => loadStandards())
       .catch(error => console.log(error))
       .finally(() => setLoadingCrud(false));
   }
@@ -110,10 +110,10 @@ const Playlists = () => {
       </Dimmer>
 
       <Segment padded basic>
-        <Header as='h2' icon textAlign='center' color="teal" >
-          <Icon name='music' circular inverted color='teal' />
-          <Header.Content>Playlists</Header.Content>
-          <Header.Subheader>Musica da ascoltare</Header.Subheader>
+        <Header as='h2' icon textAlign='center' color="brown" >
+          <Icon name='microphone' circular inverted color='brown' />
+          <Header.Content>Standards</Header.Content>
+          <Header.Subheader>Jazz da suonare</Header.Subheader>
         </Header>
 
         <Grid columns={2} >
@@ -121,38 +121,34 @@ const Playlists = () => {
             <Button onClick={back} icon="arrow left" fluid content="Back Home"></Button>
           </Grid.Column>
           <Grid.Column>
-            <Button onClick={add} icon="plus" fluid color="teal" content="Add Playlist"></Button>
+            <Button onClick={add} icon="plus" fluid color="brown" content="Add Standard"></Button>
           </Grid.Column>
         </Grid>
       </Segment>
 
-      <Table sortable textAlign="center" color="teal" unstackable selectable>
+      <Table sortable textAlign="center" color="brown" unstackable selectable>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell
-              sorted={column === 'artist' ? direction : null}
-              onClick={handleSort('artist')}>Artist</Table.HeaderCell>
+              sorted={column === 'title' ? direction : null}
+              onClick={handleSort('title')}>Title</Table.HeaderCell>
             <Table.HeaderCell
-              sorted={column === 'album' ? direction : null}
-              onClick={handleSort('album')}>Album</Table.HeaderCell>
+              sorted={column === 'aebersold' ? direction : null}
+              onClick={handleSort('aebersold')}>Aebersold</Table.HeaderCell>
             <Table.HeaderCell
-              sorted={column === 'genre' ? direction : null}
-              onClick={handleSort('genre')}>Genre</Table.HeaderCell>
-            <Table.HeaderCell
-              sorted={column === 'rating' ? direction : null}
-              onClick={handleSort('rating')}>Rating</Table.HeaderCell>
+              sorted={column === 'difficulty' ? direction : null}
+              onClick={handleSort('difficulty')}>Difficulty</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
 
         <Table.Body>
-          {tableData?.map((playlist, i) => {
+          {tableData?.map((standard, i) => {
             return (
-              <Table.Row key={i} onClick={() => update(playlist)}>
-                <Table.Cell>{playlist.artist}</Table.Cell>
-                <Table.Cell>{playlist.album}</Table.Cell>
-                <Table.Cell>{playlist.genre}</Table.Cell>
+              <Table.Row key={i} onClick={() => update(standard)}>
+                <Table.Cell>{standard.title}</Table.Cell>
+                <Table.Cell>{standard.aebersold}</Table.Cell>
                 <Table.Cell singleLine>
-                  <RatingNew rating={playlist.rating} color="teal"></RatingNew>
+                  <RatingNew rating={standard.difficulty} color="brown"></RatingNew>
                 </Table.Cell>
               </Table.Row>
             )
@@ -161,23 +157,23 @@ const Playlists = () => {
       </Table>
 
       <Modal open={open}>
-        <Modal.Header>{id ? 'Update Playlist' : 'Add Playlist'}</Modal.Header>
+        <Modal.Header>{id ? 'Update Standard' : 'Add Standard'}</Modal.Header>
         <Modal.Content>
-          <Form onSubmit={addUpdatePlaylists} loading={loadingCrud}>
-            <Form.Input label='Artist' name="artist" value={artist} placeholder='Artist' onChange={onChangeArtist} required />
-            <Form.Input label='Album' name="album" value={album} placeholder='Album' onChange={onChangeAlbum} required />
-            <Form.Input label='Genre' name="genre" value={genre} placeholder='Genre' onChange={onChangeGenre} />
+          <Form onSubmit={addUpdateStandards} loading={loadingCrud}>
+            <Form.Input label='Title' name="title" value={title} placeholder='Title' onChange={onChangeTitle} required />
+            <Form.Input label='Aebersold' name="aebersold" value={aebersold} placeholder='Aebersold' onChange={onChangeAebersold} required />
             <Form.Field>
-              <label>Rating</label>
-              <Rating icon="star" size="huge" color="teal" defaultRating={rating} maxRating={5} onRate={onChangeRating} clearable></Rating>
+              <label>Difficulty</label>
+              <Rating icon="star" size="huge" color="brown" defaultRating={difficulty} maxRating={5} onRate={onChangeDifficulty} clearable></Rating>
             </Form.Field>
+            <Form.Input label='Notes' name="notes" value={notes} placeholder='Notes' onChange={onChangeNotes} />
             <Divider horizontal style={{ margin: '25px' }}>Confirm</Divider>
             {id ?
               (<Button.Group fluid>
                 <Button type="submit" positive>Update</Button>
                 <Button.Or text='O' />
                 {!confirmDelete ? (<Button onClick={onDelete} negative>Delete</Button>) : ''}
-                {confirmDelete ? (<Button onClick={deletePlaylist} negative>Confirm Delete?</Button>) : ''}
+                {confirmDelete ? (<Button onClick={deleteStandard} negative>Confirm Delete?</Button>) : ''}
               </Button.Group>) :
               (<Button type="submit" fluid positive>{id ? 'Update' : 'Add'}</Button>)}
           </Form>
@@ -189,4 +185,4 @@ const Playlists = () => {
   );
 }
 
-export default Playlists;
+export default Standards;

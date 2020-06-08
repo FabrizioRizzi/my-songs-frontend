@@ -13,6 +13,7 @@ const Home = () => {
 
   const goToPlaylists = () => history.push('/playlists');
   const goToSongs = () => history.push('/songs');
+  const goToStandards = () => history.push('/standards');
 
   return (
     <>
@@ -26,8 +27,17 @@ const Home = () => {
       </Segment>
 
       <Segment basic>
-        <Grid columns={2} textAlign='center' container>
-          <Divider vertical>Or</Divider>
+        <Grid textAlign='center' container>
+          <Grid.Row>
+            <Grid.Column onClick={goToPlaylists}>
+              <Header as='h2' icon color="teal">
+                <Icon name='headphones' circular inverted color='teal' />
+                <Header.Content>Playlists</Header.Content>
+                <Header.Subheader>Musica da ascoltare</Header.Subheader>
+              </Header>
+            </Grid.Column>
+          </Grid.Row>
+          <Divider horizontal>Or</Divider>
           <Grid.Row >
             <Grid.Column onClick={goToSongs}>
               <Header as='h2' icon color="olive">
@@ -36,11 +46,14 @@ const Home = () => {
                 <Header.Subheader>Musica da suonare</Header.Subheader>
               </Header>
             </Grid.Column>
-            <Grid.Column onClick={goToPlaylists}>
-              <Header as='h2' icon color="teal">
-                <Icon name='headphones' circular inverted color='teal' />
-                <Header.Content>Playlists</Header.Content>
-                <Header.Subheader>Musica da ascoltare</Header.Subheader>
+          </Grid.Row>
+          <Divider horizontal>Or</Divider>
+          <Grid.Row>
+            <Grid.Column onClick={goToStandards}>
+              <Header as='h2' icon color="brown">
+                <Icon name='microphone' circular inverted color='brown' />
+                <Header.Content>Standards</Header.Content>
+                <Header.Subheader>Jazz da suonare</Header.Subheader>
               </Header>
             </Grid.Column>
           </Grid.Row>

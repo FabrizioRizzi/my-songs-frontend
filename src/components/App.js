@@ -4,6 +4,7 @@ import Login from './Login/login'
 import Home from './Home/home';
 import Playlists from './Playlists/playlists';
 import Songs from './Songs/songs';
+import Standards from './Standards/standards';
 import verifyToken from '../verifyToken';
 
 const PrivateRoute = ({ children, ...rest }) => {
@@ -27,6 +28,7 @@ const App = () => {
         <PrivateRoute exact path="/"><Home /></PrivateRoute>
         <PrivateRoute exact path="/playlists"><Playlists /></PrivateRoute>
         <PrivateRoute exact path="/songs"><Songs /></PrivateRoute>
+        <PrivateRoute exact path="/standards"><Standards /></PrivateRoute>
       </Switch>
     </BrowserRouter>
   );
