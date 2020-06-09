@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useHistory } from 'react-router-dom';
-import { Segment, Header, Icon, Grid, Button, Table, Dimmer, Loader, Form, Modal, Rating, Divider } from 'semantic-ui-react';
-import RatingNew from '../RatingNew/ratingNew';
+import { Segment, Header, Icon, Grid, Button, Table, Dimmer, Loader, Form, Modal, Rating, Divider, Checkbox } from 'semantic-ui-react';
 import { loggedInstance } from '../../axiosConfig';
 import SongsInfo from './songsInfo';
 
@@ -153,7 +152,7 @@ const Songs = () => {
         </Grid>
       </Segment>
 
-      <Table sortable textAlign="center" color="olive" unstackable selectable>
+      <Table sortable textAlign="center" color="olive" unstackable size="small">
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell
@@ -163,8 +162,11 @@ const Songs = () => {
               sorted={column === 'title' ? direction : null}
               onClick={handleSort('title')}>Title</Table.HeaderCell>
             <Table.HeaderCell
-              sorted={column === 'difficulty' ? direction : null}
-              onClick={handleSort('difficulty')}>Difficulty</Table.HeaderCell>
+              sorted={column === 'acoustic' ? direction : null}
+              onClick={handleSort('acoustic')}>Acoustic</Table.HeaderCell>
+            <Table.HeaderCell
+              sorted={column === 'dfm' ? direction : null}
+              onClick={handleSort('dfm')}>DFM</Table.HeaderCell>
             <Table.HeaderCell></Table.HeaderCell>
             <Table.HeaderCell></Table.HeaderCell>
           </Table.Row>
@@ -176,11 +178,14 @@ const Songs = () => {
               <Table.Row key={i}>
                 <Table.Cell>{song.artist}</Table.Cell>
                 <Table.Cell>{song.title}</Table.Cell>
-                <Table.Cell singleLine>
-                  <RatingNew rating={song.difficulty} color="olive"></RatingNew>
+                <Table.Cell>
+                  <Checkbox checked={song.acoustic}></Checkbox>
                 </Table.Cell>
-                <Table.Cell icon="edit" onClick={() => update(song)} style={{ cursor: 'pointer' }}></Table.Cell>
-                <Table.Cell icon="info" onClick={() => onOpenInfo(song)} style={{ cursor: 'pointer' }}></Table.Cell>
+                <Table.Cell>
+                  <Checkbox checked={song.dfm}></Checkbox>
+                </Table.Cell>
+                <Table.Cell icon="edit" onClick={() => update(song)} style={{ cursor: 'pointer', color: "olive" }}></Table.Cell>
+                <Table.Cell icon="info circle" onClick={() => onOpenInfo(song)} style={{ cursor: 'pointer', color: "olive" }}></Table.Cell>
               </Table.Row>
             )
           })}
@@ -201,7 +206,7 @@ const Songs = () => {
             <Form.Checkbox label='Dont Forget Me!' checked={dfm} onChange={onChangeDfm}></Form.Checkbox>
             <Form.Checkbox label='Backing Track' checked={backing} onChange={onChangeBacking}></Form.Checkbox>
             <Form.Checkbox label='Tab' checked={tab} onChange={onChangeTab}></Form.Checkbox>
-            <Form.Input label='Notes' name="notes" value={notes} placeholder='Notes' onChange={onChangeNotes} />
+            <Form.TextArea label='Notes' name="notes" value={notes} placeholder='Notes' onChange={onChangeNotes} />
             <Divider horizontal style={{ margin: '25px' }}>Confirm</Divider>
             {id ?
               (<Button.Group fluid>
@@ -218,9 +223,7 @@ const Songs = () => {
       </Modal>
 
       <Modal open={openInfo}>
-
         <Modal.Header>Song Info</Modal.Header>
-
         <Modal.Content>
           <SongsInfo info={info}></SongsInfo>
           <Button onClick={onCloseInfo} fluid>Close</Button>
