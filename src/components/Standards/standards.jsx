@@ -3,6 +3,7 @@ import { useHistory } from 'react-router-dom';
 import { Grid, Table, Rating, Modal, Header, Button, Loader, Icon, Dimmer, Form, Divider, Segment } from 'semantic-ui-react';
 import { loggedInstance } from '../../axiosConfig';
 import RatingNew from '../RatingNew/ratingNew';
+import StandardsInfo from './standardsInfo';
 
 const Standards = () => {
 
@@ -14,6 +15,8 @@ const Standards = () => {
 
   const [open, setOpen] = useState();
   const [confirmDelete, setConfirmDelete] = useState();
+  const [openInfo, setOpenInfo] = useState();
+  const [info, setInfo] = useState();
 
   const [title, setTitle] = useState();
   const [aebersold, setAebersold] = useState();
@@ -103,6 +106,13 @@ const Standards = () => {
     }
   }
 
+  const onOpenInfo = (info) => {
+    setOpenInfo(true);
+    setInfo(info);
+  }
+
+  const onCloseInfo = () => setOpenInfo(false);
+
   return (
     <>
       <Dimmer active={loadingData} inverted>
@@ -126,30 +136,32 @@ const Standards = () => {
         </Grid>
       </Segment>
 
-      <Table sortable textAlign="center" color="brown" unstackable selectable>
+      <Table sortable textAlign="center" color="brown" unstackable size="small">
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell
               sorted={column === 'title' ? direction : null}
               onClick={handleSort('title')}>Title</Table.HeaderCell>
-            <Table.HeaderCell
-              sorted={column === 'aebersold' ? direction : null}
-              onClick={handleSort('aebersold')}>Aebersold</Table.HeaderCell>
+            <Table.HeaderCell>Aebersold</Table.HeaderCell>
             <Table.HeaderCell
               sorted={column === 'difficulty' ? direction : null}
               onClick={handleSort('difficulty')}>Difficulty</Table.HeaderCell>
+            <Table.HeaderCell></Table.HeaderCell>
+            <Table.HeaderCell></Table.HeaderCell>
           </Table.Row>
         </Table.Header>
 
         <Table.Body>
           {tableData?.map((standard, i) => {
             return (
-              <Table.Row key={i} onClick={() => update(standard)}>
+              <Table.Row key={i}>
                 <Table.Cell>{standard.title}</Table.Cell>
                 <Table.Cell>{standard.aebersold}</Table.Cell>
                 <Table.Cell singleLine>
                   <RatingNew rating={standard.difficulty} color="brown"></RatingNew>
                 </Table.Cell>
+                <Table.Cell icon="edit" onClick={() => update(standard)} style={{ cursor: 'pointer', color: "brown" }}></Table.Cell>
+                <Table.Cell icon="info circle" onClick={() => onOpenInfo(standard)} style={{ cursor: 'pointer', color: "brown" }}></Table.Cell>
               </Table.Row>
             )
           })}
@@ -161,12 +173,12 @@ const Standards = () => {
         <Modal.Content>
           <Form onSubmit={addUpdateStandards} loading={loadingCrud}>
             <Form.Input label='Title' name="title" value={title} placeholder='Title' onChange={onChangeTitle} required />
-            <Form.Input label='Aebersold' name="aebersold" value={aebersold} placeholder='Aebersold' onChange={onChangeAebersold} required />
+            <Form.Input label='Aebersold' name="aebersold" value={aebersold} placeholder='Aebersold' onChange={onChangeAebersold} />
             <Form.Field>
               <label>Difficulty</label>
               <Rating icon="star" size="huge" color="brown" defaultRating={difficulty} maxRating={5} onRate={onChangeDifficulty} clearable></Rating>
             </Form.Field>
-            <Form.Input label='Notes' name="notes" value={notes} placeholder='Notes' onChange={onChangeNotes} />
+            <Form.TextArea label='Notes' name="notes" value={notes} placeholder='Notes' onChange={onChangeNotes} />
             <Divider horizontal style={{ margin: '25px' }}>Confirm</Divider>
             {id ?
               (<Button.Group fluid>
@@ -179,6 +191,14 @@ const Standards = () => {
           </Form>
           <Divider horizontal style={{ margin: '25px' }}>Close</Divider>
           <Button onClick={onClose} fluid>Close</Button>
+        </Modal.Content>
+      </Modal>
+
+      <Modal open={openInfo}>
+        <Modal.Header>Song Info</Modal.Header>
+        <Modal.Content>
+          <StandardsInfo info={info}></StandardsInfo>
+          <Button onClick={onCloseInfo} fluid>Close</Button>
         </Modal.Content>
       </Modal>
     </>
