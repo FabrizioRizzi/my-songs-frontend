@@ -11,3 +11,5 @@
 * Sistemare form add delete playlist
 
 * Filtrare chiamata songs
+
+* Improve icons con react icons

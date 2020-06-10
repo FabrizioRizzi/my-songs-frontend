@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Segment, Header, Icon, Grid, Button, Table, Dimmer, Loader, Form, Modal, Rating, Divider, Checkbox } from 'semantic-ui-react';
+import { Button, Dimmer, Loader, Form, Modal, Rating, Divider } from 'semantic-ui-react';
 import { loggedInstance } from '../../axiosConfig';
 import SongsInfo from './songsInfo';
+import SongsHeader from './songsHeader';
+import SongsTable from './songsTable';
 
 const Songs = () => {
 
-  const history = useHistory();
-  const back = () => history.push('/');
-
   const [tableData, setTableData] = useState();
   const [loadingData, setLoadingData] = useState();
-
 
   const [open, setOpen] = useState();
   const [confirmDelete, setConfirmDelete] = useState();
@@ -29,9 +26,6 @@ const Songs = () => {
   const [id, setId] = useState();
   const [loadingCrud, setLoadingCrud] = useState();
 
-  const [column, setColumn] = useState();
-  const [direction, setDirection] = useState();
-
   useEffect(() => loadSongs(), [])
 
   const loadSongs = () => {
@@ -40,8 +34,6 @@ const Songs = () => {
     loggedInstance.get('songs/')
       .then(response => {
         setTableData(response.data.result.sort((a, b) => a.artist < b.artist ? -1 : 1));
-        setDirection('ascending');
-        setColumn('artist');
       })
       .catch(error => console.log(error))
       .finally(() => setLoadingData(false));
@@ -60,6 +52,8 @@ const Songs = () => {
     setId('');
   }
 
+  const onClose = () => setOpen(false);
+
   const update = (item) => {
     setOpen(true);
     setConfirmDelete(false);
@@ -73,8 +67,6 @@ const Songs = () => {
     setNotes(item.notes);
     setId(item._id.$oid);
   }
-
-  const onClose = () => setOpen(false);
 
   const onChangeArtist = (event) => setArtist(event.target.value);
   const onChangeTitle = (event) => setTitle(event.target.value);
@@ -111,17 +103,6 @@ const Songs = () => {
       .finally(() => setLoadingCrud(false));
   }
 
-  const handleSort = (clickedColumn) => () => {
-    if (column !== clickedColumn) {
-      setColumn(clickedColumn);
-      setTableData(tableData.sort((a, b) => a[clickedColumn] < b[clickedColumn] ? -1 : 1));
-      setDirection('ascending');
-    } else {
-      setTableData(tableData.reverse());
-      setDirection(direction === 'ascending' ? 'descending' : 'ascending')
-    }
-  }
-
   const onOpenInfo = (info) => {
     setOpenInfo(true);
     setInfo(info);
@@ -135,62 +116,9 @@ const Songs = () => {
         <Loader>Loading...</Loader>
       </Dimmer>
 
-      <Segment padded basic>
-        <Header as='h2' icon textAlign='center' color="olive" >
-          <Icon name='play' circular inverted color='olive' />
-          <Header.Content>Songs</Header.Content>
-          <Header.Subheader>Musica da suonare</Header.Subheader>
-        </Header>
+      <SongsHeader add={add}></SongsHeader>
 
-        <Grid columns={2} >
-          <Grid.Column>
-            <Button onClick={back} icon="arrow left" fluid content="Back Home"></Button>
-          </Grid.Column>
-          <Grid.Column>
-            <Button onClick={add} icon="plus" fluid color="olive" content="Add Song"></Button>
-          </Grid.Column>
-        </Grid>
-      </Segment>
-
-      <Table sortable textAlign="center" color="olive" unstackable size="small">
-        <Table.Header>
-          <Table.Row>
-            <Table.HeaderCell
-              sorted={column === 'artist' ? direction : null}
-              onClick={handleSort('artist')}>Artist</Table.HeaderCell>
-            <Table.HeaderCell
-              sorted={column === 'title' ? direction : null}
-              onClick={handleSort('title')}>Title</Table.HeaderCell>
-            <Table.HeaderCell
-              sorted={column === 'acoustic' ? direction : null}
-              onClick={handleSort('acoustic')}>Acoustic</Table.HeaderCell>
-            <Table.HeaderCell
-              sorted={column === 'dfm' ? direction : null}
-              onClick={handleSort('dfm')}>DFM</Table.HeaderCell>
-            <Table.HeaderCell></Table.HeaderCell>
-            <Table.HeaderCell></Table.HeaderCell>
-          </Table.Row>
-        </Table.Header>
-
-        <Table.Body>
-          {tableData?.map((song) => {
-            return (
-              <Table.Row key={song._id.$oid}>
-                <Table.Cell>{song.artist}</Table.Cell>
-                <Table.Cell>{song.title}</Table.Cell>
-                <Table.Cell>
-                  <Checkbox checked={song.acoustic}></Checkbox>
-                </Table.Cell>
-                <Table.Cell>
-                  <Checkbox checked={song.dfm}></Checkbox>
-                </Table.Cell>
-                <Table.Cell icon="edit" onClick={() => update(song)} style={{ cursor: 'pointer', color: "olive" }}></Table.Cell>
-                <Table.Cell icon="info circle" onClick={() => onOpenInfo(song)} style={{ cursor: 'pointer', color: "olive" }}></Table.Cell>
-              </Table.Row>
-            )
-          })}
-        </Table.Body>
-      </Table>
+      <SongsTable tableData={tableData} update={update} onOpenInfo={onOpenInfo}></SongsTable>
 
       <Modal open={open}>
         <Modal.Header>{id ? 'Update Song' : 'Add Song'}</Modal.Header>
