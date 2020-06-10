@@ -173,9 +173,9 @@ const Songs = () => {
         </Table.Header>
 
         <Table.Body>
-          {tableData?.map((song, i) => {
+          {tableData?.map((song) => {
             return (
-              <Table.Row key={i}>
+              <Table.Row key={song._id.$oid}>
                 <Table.Cell>{song.artist}</Table.Cell>
                 <Table.Cell>{song.title}</Table.Cell>
                 <Table.Cell>

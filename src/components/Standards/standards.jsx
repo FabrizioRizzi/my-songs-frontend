@@ -152,9 +152,9 @@ const Standards = () => {
         </Table.Header>
 
         <Table.Body>
-          {tableData?.map((standard, i) => {
+          {tableData?.map((standard) => {
             return (
-              <Table.Row key={i}>
+              <Table.Row key={standard._id.$oid}>
                 <Table.Cell>{standard.title}</Table.Cell>
                 <Table.Cell>{standard.aebersold}</Table.Cell>
                 <Table.Cell singleLine>

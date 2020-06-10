@@ -145,9 +145,9 @@ const Playlists = () => {
         </Table.Header>
 
         <Table.Body>
-          {tableData?.map((playlist, i) => {
+          {tableData?.map((playlist) => {
             return (
-              <Table.Row key={i} onClick={() => update(playlist)}>
+              <Table.Row key={playlist._id.$oid} onClick={() => update(playlist)}>
                 <Table.Cell>{playlist.artist}</Table.Cell>
                 <Table.Cell>{playlist.album}</Table.Cell>
                 <Table.Cell>{playlist.genre}</Table.Cell>
