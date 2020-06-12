@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Checkbox } from 'semantic-ui-react';
+import { Table, Grid, Checkbox, Label } from 'semantic-ui-react';
 
 const SongsTable = (props) => {
 
@@ -8,6 +8,8 @@ const SongsTable = (props) => {
   const [tableDataFiltered, setTableDataFiltered] = useState();
   const [acousticFilter, setAcousticFilter] = useState();
   const [dfmFilter, setDfmFilter] = useState();
+  const [difficultFilter, setDifficultFilter] = useState();
+  const [easyFilter, setEasyFilter] = useState();
 
   useEffect(() => {
     setTableDataFiltered(props.tableData)
@@ -16,16 +18,21 @@ const SongsTable = (props) => {
   }, [props.tableData]);
 
   useEffect(() => {
-    if (acousticFilter && dfmFilter) {
-      setTableDataFiltered(props.tableData.filter(d => d.acoustic && d.dfm));
-    } else if (acousticFilter) {
-      setTableDataFiltered(props.tableData.filter(d => d.acoustic));
-    } else if (dfmFilter) {
-      setTableDataFiltered(props.tableData.filter(d => d.dfm));
-    } else {
-      setTableDataFiltered(props.tableData);
+    let dataFiltered = props.tableData;
+    if (acousticFilter) {
+      dataFiltered = dataFiltered.filter(d => d.acoustic);
     }
-  }, [acousticFilter, dfmFilter, props.tableData]);
+    if (dfmFilter) {
+      dataFiltered = dataFiltered.filter(d => d.dfm);
+    }
+    if (difficultFilter) {
+      dataFiltered = dataFiltered.filter(d => d.difficulty > 3);
+    }
+    if (easyFilter) {
+      dataFiltered = dataFiltered.filter(d => d.difficulty <= 3);
+    }
+    setTableDataFiltered(dataFiltered);
+  }, [acousticFilter, dfmFilter, difficultFilter, easyFilter, props.tableData]);
 
   const handleSort = (clickedColumn) => () => {
     if (column !== clickedColumn) {
@@ -38,15 +45,29 @@ const SongsTable = (props) => {
     }
   }
 
-  const onAcousticFilter = (e, { checked }) => setAcousticFilter(checked);
-  const onDfmFilter = (e, { checked }) => setDfmFilter(checked);
+  const toggleAcousticFilter = () => setAcousticFilter(!acousticFilter);
+  const toggleDfmFilter = () => setDfmFilter(!dfmFilter);
+  const toggleDifficultFilter = () => setDifficultFilter(!difficultFilter);
+  const toggleEasyFilter = () => setEasyFilter(!easyFilter);
 
   return (
     <>
-      Filtra acoustic
-      <Checkbox onChange={onAcousticFilter}></Checkbox>
-      Filtra dfm
-      <Checkbox onChange={onDfmFilter}></Checkbox>
+      <Grid columns={4} divided>
+        <Grid.Row>
+          <Grid.Column textAlign="center">
+            <Label as='a' onClick={toggleAcousticFilter} color={acousticFilter ? 'olive' : null}>Acoustic</Label>
+          </Grid.Column>
+          <Grid.Column textAlign="center">
+            <Label as='a' onClick={toggleDfmFilter} color={dfmFilter ? 'olive' : null}>DFM</Label>
+          </Grid.Column>
+          <Grid.Column textAlign="center">
+            <Label as='a' onClick={toggleDifficultFilter} color={difficultFilter ? 'olive' : null}>Difficult</Label>
+          </Grid.Column>
+          <Grid.Column textAlign="center">
+            <Label as='a' onClick={toggleEasyFilter} color={easyFilter ? 'olive' : null}>Easy</Label>
+          </Grid.Column>
+        </Grid.Row>
+      </Grid>
       <Table sortable textAlign="center" color="olive" unstackable size="small">
         <Table.Header>
           <Table.Row>
