@@ -10,6 +10,6 @@
 
 * Sistemare form add delete playlist
 
-* Filtrare chiamata songs
+* Improve dividere i componenti
 
 * Improve icons con react icons
