@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Table, Grid, Checkbox, Label } from 'semantic-ui-react';
+import { Table, Grid, Label, Icon } from 'semantic-ui-react';
 
 const SongsTable = (props) => {
 
@@ -52,7 +52,7 @@ const SongsTable = (props) => {
 
   return (
     <>
-      <Grid columns={4} divided>
+      <Grid columns={4} divided padded>
         <Grid.Row>
           <Grid.Column textAlign="center">
             <Label as='a' onClick={toggleAcousticFilter} color={acousticFilter ? 'olive' : null}>Acoustic</Label>
@@ -77,12 +77,6 @@ const SongsTable = (props) => {
             <Table.HeaderCell
               sorted={column === 'title' ? direction : null}
               onClick={handleSort('title')}>Title</Table.HeaderCell>
-            <Table.HeaderCell
-              sorted={column === 'acoustic' ? direction : null}
-              onClick={handleSort('acoustic')}>Acoustic</Table.HeaderCell>
-            <Table.HeaderCell
-              sorted={column === 'dfm' ? direction : null}
-              onClick={handleSort('dfm')}>DFM</Table.HeaderCell>
             <Table.HeaderCell></Table.HeaderCell>
             <Table.HeaderCell></Table.HeaderCell>
           </Table.Row>
@@ -94,14 +88,12 @@ const SongsTable = (props) => {
               <Table.Row key={song._id.$oid}>
                 <Table.Cell>{song.artist}</Table.Cell>
                 <Table.Cell>{song.title}</Table.Cell>
-                <Table.Cell>
-                  <Checkbox checked={song.acoustic} disabled></Checkbox>
+                <Table.Cell onClick={() => props.update(song)} style={{ cursor: 'pointer', color: "olive" }}>
+                  <Icon name="edit" size="big"></Icon>
                 </Table.Cell>
-                <Table.Cell>
-                  <Checkbox checked={song.dfm} disabled></Checkbox>
+                <Table.Cell onClick={() => props.onOpenInfo(song)} style={{ cursor: 'pointer', color: "olive" }}>
+                  <Icon name="info circle" size="big"></Icon>
                 </Table.Cell>
-                <Table.Cell icon="edit" onClick={() => props.update(song)} style={{ cursor: 'pointer', color: "olive" }}></Table.Cell>
-                <Table.Cell icon="info circle" onClick={() => props.onOpenInfo(song)} style={{ cursor: 'pointer', color: "olive" }}></Table.Cell>
               </Table.Row>
             )
           })}

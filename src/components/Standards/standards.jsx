@@ -119,7 +119,7 @@ const Standards = () => {
         <Loader>Loading...</Loader>
       </Dimmer>
 
-      <Segment padded basic>
+      <Segment basic>
         <Header as='h2' icon textAlign='center' color="brown" >
           <Icon name='microphone' circular inverted color='brown' />
           <Header.Content>Standards</Header.Content>
@@ -142,7 +142,6 @@ const Standards = () => {
             <Table.HeaderCell
               sorted={column === 'title' ? direction : null}
               onClick={handleSort('title')}>Title</Table.HeaderCell>
-            <Table.HeaderCell>Aebersold</Table.HeaderCell>
             <Table.HeaderCell
               sorted={column === 'difficulty' ? direction : null}
               onClick={handleSort('difficulty')}>Difficulty</Table.HeaderCell>
@@ -156,12 +155,15 @@ const Standards = () => {
             return (
               <Table.Row key={standard._id.$oid}>
                 <Table.Cell>{standard.title}</Table.Cell>
-                <Table.Cell>{standard.aebersold}</Table.Cell>
                 <Table.Cell singleLine>
                   <RatingNew rating={standard.difficulty} color="brown"></RatingNew>
                 </Table.Cell>
-                <Table.Cell icon="edit" onClick={() => update(standard)} style={{ cursor: 'pointer', color: "brown" }}></Table.Cell>
-                <Table.Cell icon="info circle" onClick={() => onOpenInfo(standard)} style={{ cursor: 'pointer', color: "brown" }}></Table.Cell>
+                <Table.Cell onClick={() => update(standard)} style={{ cursor: 'pointer', color: "brown" }}>
+                  <Icon name="edit" size="big"></Icon>
+                </Table.Cell>
+                <Table.Cell onClick={() => onOpenInfo(standard)} style={{ cursor: 'pointer', color: "brown" }}>
+                  <Icon name="info circle" size="big"></Icon>
+                </Table.Cell>
               </Table.Row>
             )
           })}

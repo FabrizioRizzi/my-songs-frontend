@@ -8,7 +8,7 @@ const PlaylistsHeader = (props) => {
   const back = () => history.push('/');
 
   return (
-    <Segment padded basic>
+    <Segment basic>
       <Header as='h2' icon textAlign='center' color="teal" >
         <Icon name='music' circular inverted color='teal' />
         <Header.Content>Playlists</Header.Content>
