@@ -1,13 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useHistory } from 'react-router-dom';
-import { Grid, Table, Rating, Modal, Header, Button, Loader, Icon, Dimmer, Form, Divider, Segment } from 'semantic-ui-react';
+import { Table, Rating, Modal, Button, Loader, Dimmer, Form, Divider } from 'semantic-ui-react';
 import { loggedInstance } from '../../axiosConfig';
 import RatingNew from '../RatingNew/ratingNew';
+import PlaylistsHeader from './playlistHeader';
 
 const Playlists = () => {
-
-  const history = useHistory();
-  const back = () => history.push('/');
 
   const [tableData, setTableData] = useState();
   const [loadingData, setLoadingData] = useState();
@@ -109,24 +106,9 @@ const Playlists = () => {
         <Loader>Loading...</Loader>
       </Dimmer>
 
-      <Segment padded basic>
-        <Header as='h2' icon textAlign='center' color="teal" >
-          <Icon name='music' circular inverted color='teal' />
-          <Header.Content>Playlists</Header.Content>
-          <Header.Subheader>Musica da ascoltare</Header.Subheader>
-        </Header>
+      <PlaylistsHeader add={add}></PlaylistsHeader>
 
-        <Grid columns={2} >
-          <Grid.Column>
-            <Button onClick={back} icon="arrow left" fluid content="Back Home"></Button>
-          </Grid.Column>
-          <Grid.Column>
-            <Button onClick={add} icon="plus" fluid color="teal" content="Add Playlist"></Button>
-          </Grid.Column>
-        </Grid>
-      </Segment>
-
-      <Table sortable textAlign="center" color="teal" unstackable selectable>
+      <Table sortable textAlign="center" color="teal" unstackable size="small">
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell
