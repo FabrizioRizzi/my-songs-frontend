@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import { useHistory } from 'react-router-dom';
 import { Table, Rating, Modal, Button, Loader, Dimmer, Form, Divider } from 'semantic-ui-react';
 import { loggedInstance } from '../../axiosConfig';
 import RatingNew from '../RatingNew/ratingNew';
 import PlaylistsHeader from './playlistHeader';
 
 const Playlists = () => {
+
+  const history = useHistory();
+  const back = () => history.push('/');
 
   const [tableData, setTableData] = useState();
   const [loadingData, setLoadingData] = useState();
@@ -106,7 +110,7 @@ const Playlists = () => {
         <Loader>Loading...</Loader>
       </Dimmer>
 
-      <PlaylistsHeader add={add}></PlaylistsHeader>
+      <PlaylistsHeader back={back} add={add}></PlaylistsHeader>
 
       <Table sortable textAlign="center" color="teal" unstackable size="small">
         <Table.Header>
