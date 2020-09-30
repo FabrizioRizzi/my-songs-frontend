@@ -13,3 +13,5 @@
 * Improve dividere i componenti
 
 * Improve icons con react icons
+
+* Cerca per artista
