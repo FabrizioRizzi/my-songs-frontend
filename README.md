@@ -1,7 +1,7 @@
-**My Songs Frontend**
+# My Songs Frontend
 
-App creata con react (create-react-app)
+* React App to manage my favourite songs to play and to listen to ;-)
 
-Semantic UI React
+* Semantic UI React
 
-Deployata con netlify
+* Deployed on Netlify
